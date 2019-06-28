@@ -12,3 +12,6 @@ dev:
 
 dev-detach:
 	sudo docker-compose up -d
+
+dev-it:
+	sudo docker-compose exec app sh
