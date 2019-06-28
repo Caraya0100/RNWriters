@@ -1,0 +1,23 @@
+version: '2'
+
+services:
+  base:
+    image: node:latest
+    volumes:
+      - substance-demo-store-nodemodules:/opt/app/node_modules
+      - .:/opt/app
+    working_dir: /opt/app
+
+  install-expo:
+    extends:
+      service: base
+    command: npm install -g expo-cli
+
+  install:
+    extends:
+      service: base
+    command: sh -c "npm install -g expo-cli && npm install"
+
+volumes:
+  substance-demo-store-nodemodules:
+    external: true
