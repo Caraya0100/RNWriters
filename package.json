@@ -1,6 +1,6 @@
 {
   "name": "substance-demo-store",
-  "description": "A demo store app for Substance React Native library.",
+  "description": "A social network demo app for Substance React Native library.",
   "version": "33.0.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
@@ -27,7 +27,9 @@
     "react-dom": "^16.8.6",
     "react-native": "https://github.com/expo/react-native/archive/sdk-33.0.0.tar.gz",
     "react-native-web": "^0.11.4",
-    "react-navigation": "^3.11.0"
+    "react-navigation": "^3.11.0",
+    "react-redux": "^7.1.0",
+    "redux-saga": "^1.0.5"
   },
   "devDependencies": {
     "babel-preset-expo": "^5.1.0",

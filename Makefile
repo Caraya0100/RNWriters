@@ -1,17 +1,33 @@
+.PHONY: build init update bash addprj deploy serve fshell flog clean beautify installpkg
+
+build:
+	docker build -t substance-demo-sn . --no-cache
+
 setup:
-	sudo docker volume create substance-demo-store-nodemodules
+	sudo docker volume create subs-demo-sn-nodemodules
 
-install-expo:
-	sudo docker-compose -f docker-compose.builder.yml run --rm install-expo
+update:
+	docker-compose run -w /opt/app app \
+		npm update
 
-install:
-	sudo docker-compose -f docker-compose.builder.yml run --rm install
+login:
+	docker-compose run -w /opt/app app \
+		expo login -u rubio -p plio1243
 
 dev:
-	sudo docker-compose up
+	docker-compose up
 
-dev-detach:
-	sudo docker-compose up -d
+clean:
+	docker-compose rm
 
-dev-it:
-	sudo docker-compose exec app sh
+beautify:
+	docker-compose run -w /opt/app app \
+		 js-beautify -r $(FILES)
+
+installpkg:
+	 docker-compose run -w /opt/app app \
+		 npm install $(ARGS) $(PKGS)
+
+uninstallpkg:
+	 docker-compose run -w /opt/app app \
+		 npm uninstall $(PKGS)

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Substance Store Demo",
-    "slug": "substance-demo-store",
+    "name": "Substance Demo Social Network",
+    "slug": "substance-demo-sn",
     "privacy": "unlisted",
     "sdkVersion": "33.0.0",
     "platforms": [
@@ -15,7 +15,7 @@
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#00000"
+      "backgroundColor": "#ffffff"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
