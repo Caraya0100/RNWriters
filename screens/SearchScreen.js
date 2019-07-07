@@ -1,41 +1,29 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useState, useEffect } from 'react';
 import {
   Text,
   View,
 } from 'react-native';
 
-import {
-    getEntries,
-} from '../actions/Actions';
+import {getAll} from '../api/Entries';
 
-const mapStateToProps = state => {
-    return { 
-        entries: state.search.entries
-    };
-};
-class SearchScreen extends React.Component {
-    static navigationOptions = {
-        header: null,
-    };
+export default function SearchScreen(props) {
+    const [entries, setEntries] = useState([]);
 
-    constructor(props) {
-        super(props);
-    }
+    useEffect(() => {
+        async function fetchEntries() {
+          const response = await getAll();
+          console.log(response);
+          setEntries(response);
+        }
+        
+        fetchEntries();
+    }, []);
 
-    componentDidMount() {
-        this.props.getEntries();
-    }
-
-    render() {
-        return (
-            <View>
-                <Text>
-                    Search screen.
-                </Text>
-            </View>
-        );
-    }
+    return (
+        <View>
+            <Text>
+                Numbers of entries {entries.length}.
+            </Text>
+        </View>
+    );
 }
-
-export default connect(mapStateToProps, { getEntries })(SearchScreen);

@@ -1,5 +1,8 @@
 import * as routes from "../constants/Routes";
 
-export function getAll() {
-    return fetch(routes.api + "/entries").then(response => response.json());
+export async function getAll() {
+    const response = await fetch(routes.api + "/entries");
+    const entries = response.json();
+    
+    return entries;
 }

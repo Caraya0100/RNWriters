@@ -6,8 +6,6 @@ import LoadingScreen from './screens/LoadingScreen';
 
 export default function App(props) {
   return (
-    <Provider store={store}>
-      <LoadingScreen/>
-    </Provider>
+    <LoadingScreen/>
   );
 }
