@@ -1,12 +1,15 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { Platform } from 'react-native';
-import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
+import { createStackNavigator, createBottomTabNavigator, BottomTabBar } from 'react-navigation';
 
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
 import SearchScreen from '../screens/SearchScreen';
-import LinksScreen from '../screens/LinksScreen';
+import TrendingScreen from '../screens/TrendingScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import Colors from '../constants/Colors';
+import {font} from '../styles/Styles';
+import {ThemeContext} from '../context/Context';
 
 const config = Platform.select({
   web: { headerMode: 'screen' },
@@ -27,11 +30,7 @@ HomeStack.navigationOptions = {
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={
-        Platform.OS === 'ios'
-          ? `ios-information-circle${focused ? '' : '-outline'}`
-          : 'md-information-circle'
-      }
+      name={'ios-home'}
     />
   ),
 };
@@ -52,32 +51,28 @@ SearchStack.navigationOptions = {
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={
-        Platform.OS === 'ios'
-          ? `ios-information-circle${focused ? '' : '-outline'}`
-          : 'md-information-circle'
-      }
+      name={'ios-search'}
     />
   ),
 };
 
 SearchStack.path = '';
 
-const LinksStack = createStackNavigator(
+const TrendingStack = createStackNavigator(
   {
-    Links: LinksScreen,
+    Trending: TrendingScreen,
   },
   config
 );
 
-LinksStack.navigationOptions = {
-  tabBarLabel: 'Links',
+TrendingStack.navigationOptions = {
+  tabBarLabel: 'Trending',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-link' : 'md-link'} />
+    <TabBarIcon focused={focused} name={'ios-flash'} />
   ),
 };
 
-LinksStack.path = '';
+TrendingStack.path = '';
 
 const SettingsStack = createStackNavigator(
   {
@@ -89,17 +84,45 @@ const SettingsStack = createStackNavigator(
 SettingsStack.navigationOptions = {
   tabBarLabel: 'Settings',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-options' : 'md-options'} />
+    <TabBarIcon focused={focused} name={'ios-settings'} />
   ),
 };
 
 SettingsStack.path = '';
 
+
+function ThemedBottomTabBar(props) {
+  const context = useContext(ThemeContext);
+  
+  return(
+    <BottomTabBar
+      {...props}
+      inactiveTintColor={context.theme.textColor}
+      style={{
+        backgroundColor: context.theme.background,
+      }}
+    />
+  );
+}
+
 const tabNavigator = createBottomTabNavigator({
-  SearchStack,
-  HomeStack,
-  LinksStack,
-  SettingsStack,
+  Home: HomeStack,
+  Search: SearchStack,
+  Trending: TrendingStack,
+  Settings: SettingsStack,
+}, {
+  initialRouteName: 'Home',
+  order: [
+    'Home',
+    'Search',
+    'Trending',
+    'Settings',
+  ],
+  tabBarOptions: {
+    activeTintColor: Colors.primary,
+    labelStyle: font.menu,
+  },
+  tabBarComponent: ThemedBottomTabBar,
 });
 
 tabNavigator.path = '';

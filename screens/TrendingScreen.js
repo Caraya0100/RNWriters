@@ -7,7 +7,7 @@ import {
 
 import {ThemeContext} from '../context/Context';
 
-export default function SearchScreen() {
+export default function TrendingScreen() {
   const context = useContext(ThemeContext);
 
   return (
@@ -21,7 +21,7 @@ export default function SearchScreen() {
   );
 }
 
-SearchScreen.navigationOptions = {
+TrendingScreen.navigationOptions = {
   header: null,
 };
 

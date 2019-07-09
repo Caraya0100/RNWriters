@@ -1,14 +1,75 @@
-import React from 'react';
-import { ExpoConfigView } from '@expo/samples';
+import React, {useState, useContext} from 'react';
+import {
+  Text,
+  View,
+  Image,
+  StyleSheet,
+  ScrollView,
+  Switch
+} from 'react-native';
+
+import {ThemeContext} from '../context/Context';
+import Themes from '../constants/Themes';
+import Colors from '../constants/Colors';
+import {nightModeImg} from '../constants/System';
+import {font} from '../styles/Styles';
 
 export default function SettingsScreen() {
-  /**
-   * Go ahead and delete ExpoConfigView and replace it with your content;
-   * we just wanted to give you a quick view of your config.
-   */
-  return <ExpoConfigView />;
+  const context = useContext(ThemeContext);
+  let nightMode = false;
+  let label = 'Active night mode:';
+
+  if (context.theme === Themes.dark) {
+    nightMode = true;
+    label = 'Deactive night mode:';
+  }
+
+  return (
+    <View style={[styles.container, {
+      backgroundColor: context.theme.background,
+    }]}>
+        <ScrollView
+          contentContainerStyle={styles.contentContainer}>
+            <Image source={{uri: nightModeImg}} style={styles.image} />
+            <View style={styles.switchContainer}>
+              <Text style={[font.title, {color: context.theme.textColor, fontSize: 12, width: 150}]}>{label}</Text>
+              <Switch 
+                onValueChange={context.toggleTheme} 
+                value={nightMode}
+                trackColor={{true: Colors.secondary}}
+                thumbColor={Colors.primary}
+                style={styles.switch}
+              />
+            </View>
+        </ScrollView>
+    </View>
+  );
 }
 
 SettingsScreen.navigationOptions = {
-  title: 'app.json',
+  header: null,
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  contentContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 30,
+  },
+  switchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  switch: {
+    width: 50,
+  },
+  image: {
+    width: 200,
+    height: 200,
+    marginBottom: 10,
+  }
+});

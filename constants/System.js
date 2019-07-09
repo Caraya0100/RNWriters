@@ -1,0 +1,1 @@
+export const nightModeImg = 'https://firebasestorage.googleapis.com/v0/b/substance-demo-store.appspot.com/o/system%2Fnight-mode.png?alt=media&token=80ad56d2-bfba-40a8-a645-332cf7b882b9';
