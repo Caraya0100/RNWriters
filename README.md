@@ -1,7 +1,7 @@
 # RNWriters
 Demo de una red social de escritores desarrollada en React Native
 
-Prueba la demo con la app de [Expo](https://play.google.com/store/apps/details?id=host.exp.exponent)
+Prueba la demo escaneando el código QR con la app de [Expo](https://play.google.com/store/apps/details?id=host.exp.exponent)
 
 ![app-qr](https://github.com/Caraya0100/RNWriters/blob/master/qr.png)
 
