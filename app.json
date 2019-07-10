@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "Writers",
+    "slug": "writers",
+    "privacy": "unlisted",
+    "sdkVersion": "33.0.0",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#fc5e52"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "description": "Demo de una red social de escritores.\n\nEl objetivo de este proyecto es el de experimentar con React Native.\nSe ha utilizado Redux y Redux Saga al comienzo para luego refactorizar el código utilizando \nHooks, para de este modo descubrir las ventajas de estos últimos.",
+    "githubUrl": "https://github.com/Caraya0100/RNWriters"
+  }
+}
