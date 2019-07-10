@@ -7,7 +7,7 @@ Prueba la demo escaneando el código QR con la app de [Expo](https://play.google
 
 El objetivo de este proyecto es el de experimentar con React Native.
 Se ha utilizado Redux y Redux Saga al comienzo para luego refactorizar el código utilizando 
-Hooks, para de este modo descubrir las ventajas de estos últimos.
+Hooks y Context, para de este modo descubrir las ventajas de estos últimos.
 
 Los datos estan almacenados en Firebase Firestore (bd no relacional), la API construida 
 se encuentra almacenada en Firebase Cloud Functions.
