@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Substance Demo Social Network",
-    "slug": "substance-demo-sn",
+    "name": "Writers",
+    "slug": "writers",
     "privacy": "unlisted",
     "sdkVersion": "33.0.0",
     "platforms": [
@@ -14,8 +14,8 @@
     "icon": "./assets/images/icon.png",
     "splash": {
       "image": "./assets/images/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "resizeMode": "cover",
+      "backgroundColor": "#fc5e52"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -26,6 +26,7 @@
     "ios": {
       "supportsTablet": true
     },
-    "description": ""
+    "description": "Demo de una red social de escritores.\n\nEl objetivo de este proyecto es el de experimentar con React Native.\nSe ha utilizado Redux y Redux Saga al comienzo para luego refactorizar el código utilizando \nHooks, para de este modo descubrir las ventajas de estos últimos.",
+    "githubUrl": "https://github.com/Caraya0100/RNWriters"
   }
 }

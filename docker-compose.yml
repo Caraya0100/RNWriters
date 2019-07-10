@@ -9,7 +9,7 @@ services:
     volumes:
       - .:/opt/app
       - subs-demo-sn-nodemodules:/opt/app/node_modules/
-    command: npm run start
+    command: sh -c "expo start"
     environment:
       REACT_NATIVE_PACKAGER_HOSTNAME: 192.168.0.8
 volumes:

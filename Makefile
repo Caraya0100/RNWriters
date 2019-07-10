@@ -12,10 +12,16 @@ update:
 
 login:
 	docker-compose run -w /opt/app app \
-		expo login -u rubio -p plio1243
+		expo login -u $(USER) -p $(PASS)
 
 dev:
 	docker-compose up
+
+dev-detach:
+	docker-compose up -d
+
+it:
+	docker-compose exec app sh
 
 clean:
 	docker-compose rm

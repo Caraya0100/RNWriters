@@ -100,14 +100,14 @@ SettingsStack.path = '';
 const tabNavigator = createBottomTabNavigator({
   Home: HomeStack,
   Search: SearchStack,
-  Trending: TrendingStack,
+  //Trending: TrendingStack,
   Settings: SettingsStack,
 }, {
   initialRouteName: 'Home',
   order: [
     'Home',
     'Search',
-    'Trending',
+    //'Trending',
     'Settings',
   ],
   tabBarOptions: {

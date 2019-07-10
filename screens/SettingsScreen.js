@@ -11,19 +11,16 @@ import {
 import {ThemeContext} from '../context/Context';
 import Themes from '../constants/Themes';
 import Colors from '../constants/Colors';
-import {nightModeImg} from '../constants/System';
 import {font} from '../styles/Styles';
 
 export default function SettingsScreen() {
   const context = useContext(ThemeContext);
   let nightMode = false;
   let label = 'Activate night mode:';
-  let imgOpacity = 0.35;
 
   if (context.theme === Themes.dark) {
     nightMode = true;
     label = 'Deactivate night mode:';
-    imgOpacity = 1;
   }
 
   return (
@@ -32,7 +29,7 @@ export default function SettingsScreen() {
     }]}>
         <ScrollView
           contentContainerStyle={styles.contentContainer}>
-            <Image source={{uri: nightModeImg}} style={[styles.image, {opacity: imgOpacity}]} />
+            <Image source={require('../assets/images/line-night-mode.png')} style={styles.image} />
             <View style={styles.switchContainer}>
               <Text style={[font.title, {color: context.theme.textColor, fontSize: 12, width: 150}]}>{label}</Text>
               <Switch 
