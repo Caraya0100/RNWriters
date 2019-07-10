@@ -1,19 +1,20 @@
 import { useState, useEffect } from 'react';
 
-import {getAll} from '../api/Entries';
+import * as routes from "../constants/Routes";
 
-export function useFetch() {
-    const [entries, setEntries] = useState([]);
+export function useFetch(endpoint, defaultValue) {
+    const [data, setData] = useState(defaultValue);
 
     useEffect(() => {
-        async function fetchEntries() {
-            const response = await getAll();
-            //console.log(response);
-            setEntries(response);
+        async function fetchData() {
+            const response = await fetch(routes.api + '/' + endpoint);
+            const json = await response.json();
+
+            setData(json);
         }
         
-        fetchEntries();
-    }, []);
+        fetchData();
+    }, defaultValue);
 
-    return entries;
+    return data;
 }

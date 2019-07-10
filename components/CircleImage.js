@@ -2,6 +2,7 @@ import React, {useContext} from 'react';
 import {
     Image,
     View,
+    TouchableOpacity,
     StyleSheet,
 } from 'react-native';
 
@@ -9,12 +10,14 @@ import {ThemeContext} from '../context/Context';
 
 export default function CircleImage(props) {
     const context = useContext(ThemeContext);
-    const {size, url, border} = props;
-    const styles = styleSheet(size, border, context.theme.background);
+    const {size, url, border, onPress} = props;
+    const styles = styleSheet(size, border, context.theme.backgroundColor);
 
     return(
         <View style={[styles.container, props.style]}>
-            <Image source={{uri: url}} style={styles.image} />
+            <TouchableOpacity onPress={onPress}>
+                <Image source={{uri: url}} style={styles.image} />
+            </TouchableOpacity>
         </View>
     );
 }

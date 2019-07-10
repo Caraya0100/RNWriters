@@ -1,45 +1,44 @@
-import React, {useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {
   View,
   StyleSheet,
   ScrollView,
-  FlatList,
+  Dimensions
 } from 'react-native';
 
-import {useFetch,} from '../hooks/Fetch';
 import {ThemeContext} from '../context/Context';
+import {useEntriesList} from '../hooks/Dom';
 import Entry from '../components/Entry';
 
-export default function HomeScreen() {
+export default function HomeScreen(props) {
   const context = useContext(ThemeContext);
-  const entries = useFetch();
+
+  onPressEntry = (id) => {
+    props.navigation.navigate('Entry', { id });
+  }
 
   keyExtractor = (item, index) => item.id;
 
-  renderItem = ({item}) => (
-    <Entry
-      title={item.title}
-      excerpt={item.excerpt}
-      uimg={item.uimg}
-      image={item.image}
-      imageShape='circle'
-      icon='ios-heart-empty'
-    />
-  );
+  const entries = useEntriesList({
+    horizontal: true, 
+    renderItem: ({item}) => (
+      <Entry
+        id={item.id}
+        content={{title: item.title, text: item.excerpt, date: item.date}}
+        author={{id: item.uid, image: item.uimg}}
+        image={{url: item.image, size: 120, shape: 'circle'}}
+        border={5}
+        icon={{i: 'ios-add', size: 100, fontSize: 48, onPress: () => onPressEntry(item.id)}}
+        navigate={props.navigation.navigate}
+        style={styles.entry}
+      />
+    )
+  });
 
   return (
-    <View style={[styles.container, {
-      backgroundColor: context.theme.background,
-    }]}>
-        <ScrollView
-          contentContainerStyle={styles.contentContainer}>
-          <FlatList
-            data={entries}
-            keyExtractor={keyExtractor}
-            renderItem={renderItem}
-            horizontal={true}
-            contentContainerStyle={styles.listContainer}
-          />
+    <View style={[styles.container, {backgroundColor: context.theme.backgroundColor}]}>
+        <ScrollView contentContainerStyle={styles.contentContainer}>
+          {entries}
         </ScrollView>
     </View>
   );
@@ -57,8 +56,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingTop: 30,
   },
-  listContainer: {
-    flexGrow: 1,
-    alignItems: 'stretch',
+  entry: {
+    width: Dimensions.get('screen').width,
   }
 });

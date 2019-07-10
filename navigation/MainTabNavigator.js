@@ -1,15 +1,16 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import { Platform } from 'react-native';
-import { createStackNavigator, createBottomTabNavigator, BottomTabBar } from 'react-navigation';
+import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
 import TabBarIcon from '../components/TabBarIcon';
+import ThemedBottomTabBar from '../components/ThemedBottomTabBar';
 import HomeScreen from '../screens/HomeScreen';
 import SearchScreen from '../screens/SearchScreen';
+import EntryScreen from '../screens/EntryScreen';
 import TrendingScreen from '../screens/TrendingScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import Colors from '../constants/Colors';
 import {font} from '../styles/Styles';
-import {ThemeContext} from '../context/Context';
 
 const config = Platform.select({
   web: { headerMode: 'screen' },
@@ -20,6 +21,9 @@ const HomeStack = createStackNavigator(
   {
     Home: {
       screen: HomeScreen,
+    },
+    Entry: {
+      screen: EntryScreen,
     },
   },
   config
@@ -41,6 +45,9 @@ const SearchStack = createStackNavigator(
   {
     Search: {
       screen: SearchScreen,
+    },
+    Entry: {
+      screen: EntryScreen,
     },
   },
   config
@@ -89,21 +96,6 @@ SettingsStack.navigationOptions = {
 };
 
 SettingsStack.path = '';
-
-
-function ThemedBottomTabBar(props) {
-  const context = useContext(ThemeContext);
-  
-  return(
-    <BottomTabBar
-      {...props}
-      inactiveTintColor={context.theme.textColor}
-      style={{
-        backgroundColor: context.theme.background,
-      }}
-    />
-  );
-}
 
 const tabNavigator = createBottomTabNavigator({
   Home: HomeStack,

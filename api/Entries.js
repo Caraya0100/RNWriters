@@ -6,3 +6,10 @@ export async function getAll() {
     
     return entries;
 }
+
+export async function get(id) {
+    const response = await fetch(routes.api + "/entry/" + id);
+    const entry = response.json();
+    
+    return entry;
+}

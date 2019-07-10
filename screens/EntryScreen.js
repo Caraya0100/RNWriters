@@ -6,23 +6,29 @@ import {
 } from 'react-native';
 
 import {ThemeContext} from '../context/Context';
+import TopBarHeaderLeft from '../components/TopBarHeaderLeft';
+import {useEntry} from '../hooks/Dom';
 
-export default function TrendingScreen() {
+export default function EntryScreen(props) {
   const context = useContext(ThemeContext);
+  const entry = useEntry(props.navigation.getParam('id', ''));
 
   return (
     <View style={[styles.container, {
       backgroundColor: context.theme.backgroundColor,
     }]}>
-        <ScrollView
-          contentContainerStyle={styles.contentContainer}>
+        <ScrollView contentContainerStyle={styles.contentContainer}>
+          {entry}
         </ScrollView>
     </View>
   );
 }
 
-TrendingScreen.navigationOptions = {
-  header: null,
+EntryScreen.navigationOptions = ({navigation}) => {
+  return({
+    headerTransparent: true,
+    headerLeft: (<TopBarHeaderLeft navigation={navigation} />),
+  })
 };
 
 const styles = StyleSheet.create({
@@ -31,6 +37,5 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flexGrow: 1,
-    paddingTop: 30,
   },
 });

@@ -2,11 +2,15 @@ export default Themes = {
     light: {
       titleColor: '#4c4c4c',
       textColor: '#707070',
-      background: '#ffffff',
+      backTextColor: '#000000',
+      backgroundColor: '#ffffff',
+      transparentBgColor: 'rgba(255,255,255,0.3)',
     },
     dark: {
       titleColor: '#ffffff',
       textColor: '#969696',
-      background: '#222222',
+      backTextColor: '#ffffff',
+      backgroundColor: '#222222',
+      transparentBgColor: 'rgba(0,0,0,0.3)',
     },
 };

@@ -17,20 +17,22 @@ import {font} from '../styles/Styles';
 export default function SettingsScreen() {
   const context = useContext(ThemeContext);
   let nightMode = false;
-  let label = 'Active night mode:';
+  let label = 'Activate night mode:';
+  let imgOpacity = 0.35;
 
   if (context.theme === Themes.dark) {
     nightMode = true;
-    label = 'Deactive night mode:';
+    label = 'Deactivate night mode:';
+    imgOpacity = 1;
   }
 
   return (
     <View style={[styles.container, {
-      backgroundColor: context.theme.background,
+      backgroundColor: context.theme.backgroundColor,
     }]}>
         <ScrollView
           contentContainerStyle={styles.contentContainer}>
-            <Image source={{uri: nightModeImg}} style={styles.image} />
+            <Image source={{uri: nightModeImg}} style={[styles.image, {opacity: imgOpacity}]} />
             <View style={styles.switchContainer}>
               <Text style={[font.title, {color: context.theme.textColor, fontSize: 12, width: 150}]}>{label}</Text>
               <Switch 

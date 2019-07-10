@@ -1,14 +1,16 @@
 import { AppLoading } from 'expo';
 import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
+import {ThemeContext} from '../context/Context';
 import AppNavigator from '../navigation/AppNavigator';
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
+  const context = useContext(ThemeContext);
 
   if (!isLoadingComplete && !props.skipLoadingScreen) {
     return (
@@ -20,7 +22,7 @@ export default function App(props) {
     );
   } else {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, {backgroundColor: context.theme.backgroundColor}]}>
         {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
         <AppNavigator />
       </View>
