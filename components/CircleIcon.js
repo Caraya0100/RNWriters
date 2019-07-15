@@ -1,6 +1,5 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import {
-    Text,
     View,
     TouchableOpacity,
     StyleSheet,
@@ -8,7 +7,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 
-export default function BoldCircle(props) {
+export default function CircleIcon(props) {
     const {icon, size, fontSize, border, bgColors, textColor, onPress, style} = props;
     const styles = styleSheet(size, border);
 

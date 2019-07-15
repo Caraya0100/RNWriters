@@ -3,7 +3,6 @@ import {
   View,
   StyleSheet,
   ScrollView,
-  FlatList,
 } from 'react-native';
 
 import {ThemeContext} from '../context/Context';
@@ -20,6 +19,7 @@ export default function SearchScreen(props) {
   keyExtractor = (item, index) => item.id;
 
   const entries = useEntriesList({
+    keyExtractor,
     horizontal: false, 
     renderItem: ({item}) => (
       <Entry

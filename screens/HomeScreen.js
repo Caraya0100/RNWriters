@@ -1,13 +1,12 @@
-import React, {useState, useContext, useEffect} from 'react';
+import React, {useContext} from 'react';
 import {
   View,
   StyleSheet,
   ScrollView,
-  Dimensions
 } from 'react-native';
 
 import {ThemeContext} from '../context/Context';
-import {useEntriesList} from '../hooks/Dom';
+import {useEntriesSlider} from '../hooks/Dom';
 import Entry from '../components/Entry';
 
 export default function HomeScreen(props) {
@@ -19,7 +18,7 @@ export default function HomeScreen(props) {
 
   keyExtractor = (item, index) => item.id;
 
-  const entries = useEntriesList({
+  const entries = useEntriesSlider({
     horizontal: true, 
     renderItem: ({item}) => (
       <Entry
@@ -30,9 +29,9 @@ export default function HomeScreen(props) {
         border={5}
         icon={{i: 'ios-add', size: 100, fontSize: 48, onPress: () => onPressEntry(item.id)}}
         navigate={props.navigation.navigate}
-        style={styles.entry}
       />
-    )
+    ),
+    dependencies: [context.theme]
   });
 
   return (
@@ -54,9 +53,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flexGrow: 1,
-    paddingTop: 30,
-  },
-  entry: {
-    width: Dimensions.get('screen').width,
+    //paddingTop: 30,
   }
 });
