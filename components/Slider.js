@@ -1,12 +1,13 @@
-import React, {useState, useReducer, useEffect} from 'react';
+import React, {useState, useRef} from 'react';
 import {
     View,
-    PanResponder,
     ActivityIndicator,
     Animated,
     Dimensions,
     StyleSheet,
 } from 'react-native';
+
+import {usePanResponder} from '../hooks/PanResponder';
 
 const layout = {
     window: {
@@ -15,171 +16,167 @@ const layout = {
     }
 };
 
-const numberOfItems = 3;
-
 const defaultProps = {
     data: [],
     initialItem: 0,
     keyExtractor: (item, index) => index,
     renderItem: ({item, index}) => {},
     horizontal: true,
-    resilience: 45,
+    resilience: 0.15,
     grab: {size: 0.3},
     loader: {size: 'large', color: 'darkcyan'},
     itemStyle: {},
     style: {},
 }
 
-function initialState({data, initialItem, renderItem, horizontal, resilience, loader}) {
-    return {
-        translate: [
-            horizontal ? {x: -layout.window.width, y: 0}: {x: 0, y: -layout.window.height},
-            {x: 0, y: 0},
-            horizontal ? {x: resilience, y: 0}: {x: 0, y: resilience},
-        ],
-        items: [
-            renderEmptyItem(),
-            renderItem({item: data[initialItem], index: initialItem}),
-            data.length > 1 && initialItem < (data.length - 1) ? 
-                renderItem({item: data[(initialItem + 1)], index: (initialItem + 1)}) : 
-                renderLoader(loader.size, loader.color)
-        ],
-        order: [3, 2, 1],
-        current: {
-            data: initialItem,
-            item: 1,
-        }
-    }
-}
-
 export default function Slider(props) {
     if (!props.data.length) 
         return renderEmptyItem();
         
-    const [panResponder, setPanResponder] = useState(PanResponder.create({}));
-    const [state, dispatch] = useReducer(reducer, initialState(props));
-    let blockSlider = false;
+    let _distance = 0;
+    let _forthcoming = 0;
+    const [items, setItems] = useState([...props.data]);
+    const translate = useRef(initialTranslate(props));
+    //const [current, setCurrent] = useState(props.initialItem);
+    const item = useRef(props.initialItem);
+    const [panResponder, pan] = usePanResponder({
+        addPanListener: (progress) => {
+            let xy = 
+            translate.current[item.current].setValue(updateTranslate({
+                itemIdx: item.current,
+                pan: progress,
+                current: item.current,
+                horizontal: props.horizontal
+            }));
 
-    useEffect(() => {
-        console.log('-------createPanResponder-------');
-        setPanResponder(createPanResponder({
-            onMoveShouldSetPanResponder: (evt, gestureState) => {
-                if (evt.nativeEvent.pageY > Math.floor(layout.window.height * (1 - props.grab.size))) {
-                    return true;
+            if (_forthcoming >= 0 && _forthcoming < items.length && _forthcoming !== item.current) {
+                translate.current[_forthcoming].setValue(updateTranslate({
+                    itemIdx: _forthcoming,
+                    pan: progress,
+                    current: item.current,
+                    horizontal: props.horizontal
+                }));
+            }
+        },
+        onMoveShouldSetPanResponder: (evt, gestureState) => {
+            if (evt.nativeEvent.pageY > Math.floor(layout.window.height * (1 - props.grab.size))) {
+                return true;
+            }
+
+            return false;
+        },
+        onPanResponderGrant: (evt, gestureState) => {
+        },
+        onPanResponderMove: (evt, gestureState) => {
+            _distance = props.horizontal ? gestureState.dx : gestureState.dy;
+            _forthcoming = _distance < 0 ? item.current + 1 : item.current - 1;
+
+            return true;
+        },
+        onPanResponderRelease: (evt, gestureState) => {
+            const size = props.horizontal ? layout.window.width : layout.window.height;
+
+            if (Math.abs(_distance) >= (size * props.resilience)) {
+                if (_forthcoming >= 0 && _forthcoming < items.length) {
+                    Animated.timing(
+                        translate.current[item.current],
+                        {
+                            toValue: {
+                                x: props.horizontal ?  _distance < 0 ? -layout.window.width : layout.window.width / 2 : 0, 
+                                y: !props.horizontal ? _distance < 0 ? -layout.window.height : layout.window.height / 2 : 0
+                            },
+                            duration: 300
+                        },
+                    ).start();
+
+                    Animated.timing(
+                        translate.current[_forthcoming],
+                        {
+                            toValue: { x: 0, y: 0},
+                            duration: 300
+                        },
+                    ).start();
+
+                    item.current = _forthcoming;
+                } else {
+                    Animated.spring(
+                        translate.current[item.current],
+                        {toValue: {x: 0, y: 0}},
+                    ).start();
                 }
-
-                return false;
-            },
-            onPanResponderGrant: (evt, gestureState) => {
-                //setItems({x: gestureState.dx, y: gestureState.dy});
-            },
-            onPanResponderMove: (evt, gestureState) => {
-                if (!blockSlider) {
-                    let distance = gestureState.dx;
-
-                    if (!props.horizontal) distance = gestureState.dy;
-
-                    /*if (Math.abs(distance) > props.resilience) {
-                        blockSlider = true;
-                        changeCurrentItem();
-                    } else*/ 
-                        moveItems({
-                            distance, 
-                            current: state.current.item, 
-                            horizontal: props.horizontal,
-                            resilience: props.resilience, 
-                            dispatch
-                        });
-                }
-            },
-            onPanResponderRelease: (evt, gestureState) => {
-                //setTransform({x: 0, y: 0});
-            },
-            onPanResponderTerminate: (evt, gestureState) => {
-            },
-        }));
-    }, [state.current.item, props.data, props.renderItem, props.resilience, props.horizontal, props.grab]);
-
+            } else {
+                Animated.spring(
+                    translate.current[item.current],
+                    {toValue: {x: 0, y: 0}},
+                ).start();
+            }
+        },
+        onPanResponderTerminate: (evt, gestureState) => {
+        },
+    }, [props.resilience, props.horizontal, items]);
+    
     const content = [];
-
-    state.items.forEach((item, index) => {
+    
+    for (let i = 0; i < items.length; i++) {
         const itemStyles = [
             props.itemStyle,
             styles.itemContainer, 
-            itemTranslate(state.translate[index].x, state.translate[index].y),
-            itemOrder(state.order[index])
-        ]
+            {transform: translate.current[i].getTranslateTransform()},
+            {zIndex: items.length - i}
+        ];
 
         content.push(
-            <Animated.View 
-            key={index} 
-            style={itemStyles}>
-                {state.items[index]}
+            <Animated.View key={i} style={itemStyles}>
+                {props.renderItem({item: items[i], index: i})}
             </Animated.View>
         );
-    });
+    }
 
     return <View style={[styles.container, props.style]} {...panResponder.panHandlers}>{content}</View>
 }
 
 Slider.defaultProps = defaultProps;
 
-function reducer(state, action) {
-    switch (action.type) {
-        case 'move':
-            return {...state, translate: Object.assign(
-                [...state.translate], 
-                {[action.payload.current.index]: action.payload.current.xy},
-                {[action.payload.adjacent.index]: action.payload.adjacent.xy}
-            )}
-        default:
-            throw new Error();
-    }
-}
+function initialTranslate({initialItem, data, horizontal}) {
+    const translate = [];
 
-function moveItems({distance, current, horizontal, resilience, dispatch}) {
-    const prev = prevItem(current);
-    const next = nextItem(current);
-    const dragResilience = 0.2;
-    let drag = resilience + (distance * dragResilience);
-    let items = {move: 'current', drag: 'adjacent'};
-    let axis = {primary: 'x', secondary: 'y', size: -layout.window.width};
-    const payload = {
-        current: { index: current, xy: {x: 0, y: 0} },
-        adjacent: { index: next, xy: {x: 0, y: 0} }
-    };
-
-    if (!horizontal) axis = {primary: 'y', secondary: 'x', size: -layout.window.height};
-
-    if (distance > 0) {
-        items = {move: 'adjacent', drag: 'current'};
-        payload.adjacent.index = prev;
-        drag = distance * dragResilience;
-        distance += axis.size;
+    for (let i = 0; i < data.length; i++) {
+        translate.push(new Animated.ValueXY(updateTranslate({
+            itemIdx: i,
+            pan: {x: 0, y: 0},
+            current: initialItem,
+            horizontal
+        })));
     }
 
-    payload[items.move].xy[axis.primary] = distance; 
-    payload[items.move].xy[axis.secondary] = 0;
-    payload[items.drag].xy[axis.primary] = drag; 
-    payload[items.drag].xy[axis.secondary] = 0;
-    
-    dispatch({type: 'move', payload});
+    return translate;
 }
 
-function changeCurrentItem() {
-    console.log('-------changeCurrentItem-------');
-}
+function updateTranslate({itemIdx, pan, current, horizontal}) {
+    let drag = 0;
+    let axis = horizontal ? 'x' : 'y';
 
-function nextItem(current) {
-    if (++current === numberOfItems) return 0;
-    
-    return current;
-}
+    if (itemIdx < current) {
+        drag = horizontal ? -layout.window.width : -layout.window.height;
 
-function prevItem(current) {
-    if (--current < 0) return numberOfItems - 1;
+        if (itemIdx === (current - 1)) {
+            const speedUp = pan[axis] * 2;
+            drag += speedUp;
+        }
+    } else if (itemIdx > current) {
+        drag = horizontal ? layout.window.width / 2 : layout.window.height / 2;
+
+        if (itemIdx === (current + 1)) {
+            const slowDown = pan[axis] * 0.5;
+            drag += slowDown;
+        }
+    } else {
+        drag = pan[axis];
+    }
+
+    if (horizontal) return {x: drag, y: 0};
     
-    return current;
+    return {x: 0, y: drag};
 }
 
 function renderEmptyItem() {
@@ -192,46 +189,6 @@ function renderLoader(size, color) {
             <ActivityIndicator size={size} color={color} />
         </View>
     );
-}
-
-function createPanResponder({
-    onMoveShouldSetPanResponder,
-    onPanResponderGrant, 
-    onPanResponderMove, 
-    onPanResponderRelease, 
-    onPanResponderTerminate}) {
-    return PanResponder.create({
-        //onStartShouldSetPanResponder: (evt, gestureState) => true,
-        //onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
-        onMoveShouldSetPanResponder: onMoveShouldSetPanResponder,
-        //onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
-        onPanResponderGrant: onPanResponderGrant,
-        onPanResponderMove: onPanResponderMove,
-        onPanResponderTerminationRequest: (evt, gestureState) => true,
-        onPanResponderRelease: onPanResponderRelease,
-        onPanResponderTerminate: onPanResponderTerminate,
-        onShouldBlockNativeResponder: (evt, gestureState) => true,
-    });
-}
-
-function itemOrder(z) {
-    const zIndex = StyleSheet.create({
-        style: {
-            zIndex: z,
-        },
-    });
-
-    return zIndex.style;
-}
-
-function itemTranslate(x, y) {
-    const transform = StyleSheet.create({
-        style: {
-            transform: [{translateX: x}, {translateY: y}],
-        },
-    });
-
-    return transform.style;
 }
 
 const styles = StyleSheet.create({

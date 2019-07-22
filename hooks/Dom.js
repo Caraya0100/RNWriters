@@ -36,9 +36,9 @@ export function useEntriesSlider({horizontal, renderItem}) {
                     loader={{size: 'large', color: Colors.primary}}
                     itemStyle={{
                         backgroundColor: context.theme.backgroundColor,
-                        borderLeftWidth: 1,
+                        /*borderLeftWidth: 1,
                         borderRightWidth: 1,
-                        borderColor: context.theme.borderColor,
+                        borderColor: context.theme.borderColor,*/
                       }}
                     />
                 ));
