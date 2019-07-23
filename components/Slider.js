@@ -23,7 +23,7 @@ const defaultProps = {
     renderItem: ({item, index}) => {},
     horizontal: true,
     resilience: 0.15,
-    grab: {size: 0.3},
+    grab: {size: 0.45},
     loader: {size: 'large', color: 'darkcyan'},
     itemStyle: {},
     style: {},
@@ -37,7 +37,6 @@ export default function Slider(props) {
     let _forthcoming = 0;
     const [items, setItems] = useState([...props.data]);
     const translate = useRef(initialTranslate(props));
-    //const [current, setCurrent] = useState(props.initialItem);
     const item = useRef(props.initialItem);
     const [panResponder, pan] = usePanResponder({
         addPanListener: (progress) => {
@@ -78,22 +77,22 @@ export default function Slider(props) {
 
             if (Math.abs(_distance) >= (size * props.resilience)) {
                 if (_forthcoming >= 0 && _forthcoming < items.length) {
-                    Animated.timing(
+                    Animated.spring(
                         translate.current[item.current],
                         {
                             toValue: {
                                 x: props.horizontal ?  _distance < 0 ? -layout.window.width : layout.window.width / 2 : 0, 
                                 y: !props.horizontal ? _distance < 0 ? -layout.window.height : layout.window.height / 2 : 0
                             },
-                            duration: 300
+                            bounciness: 0
                         },
                     ).start();
 
-                    Animated.timing(
+                    Animated.spring(
                         translate.current[_forthcoming],
                         {
                             toValue: { x: 0, y: 0},
-                            duration: 300
+                            bounciness: 0
                         },
                     ).start();
 
@@ -109,6 +108,18 @@ export default function Slider(props) {
                     translate.current[item.current],
                     {toValue: {x: 0, y: 0}},
                 ).start();
+
+                if (_distance > 0 && (item.current - 1) >= 0) {
+                    Animated.spring(
+                        translate.current[item.current - 1],
+                        {
+                            toValue: {
+                                x: props.horizontal ?  -layout.window.width : 0, 
+                                y: !props.horizontal ? -layout.window.height : 0
+                            }
+                        },
+                    ).start();
+                }
             }
         },
         onPanResponderTerminate: (evt, gestureState) => {

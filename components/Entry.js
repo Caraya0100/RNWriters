@@ -73,7 +73,7 @@ export default function Entry(props) {
             </View>
             <View style={[styles.textContainer, {paddingBottom: paddingBottom}]}>
                 <Text style={[{color: context.theme.titleColor}, styles.text, font.title]}>{content.title}</Text>
-                <Text style={[{color: context.theme.textColor}, styles.text, font.text]}>{content.date}</Text>
+                <Text style={[{color: context.theme.textColor}, styles.text, font.text]}>{author.name} • {content.date}</Text>
                 <Text style={[{color: context.theme.textColor}, styles.text, font.text]}>{content.text}</Text>
             </View>
         </View>

@@ -25,7 +25,7 @@ export default function SearchScreen(props) {
       <Entry
         id={item.id}
         content={{title: item.title, text: item.excerpt, date: item.date}}
-        author={{id: item.uid, image: item.uimg}}
+        author={{id: item.uid, image: item.uimg, name: item.uname}}
         image={{url: item.image, size: 70, shape: 'rect'}}
         border={3}
         navigate={props.navigation.navigate}
