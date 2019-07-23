@@ -5,6 +5,7 @@ export default Themes = {
       backTextColor: '#000000',
       backgroundColor: '#ffffff',
       transparentBgColor: 'rgba(255,255,255,0.3)',
+      borderColor: '#f5f5f5',
     },
     dark: {
       titleColor: '#ffffff',
@@ -12,5 +13,6 @@ export default Themes = {
       backTextColor: '#ffffff',
       backgroundColor: '#222222',
       transparentBgColor: 'rgba(0,0,0,0.3)',
+      borderColor: '#000000',
     },
 };

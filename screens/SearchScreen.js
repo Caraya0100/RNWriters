@@ -3,7 +3,6 @@ import {
   View,
   StyleSheet,
   ScrollView,
-  FlatList,
 } from 'react-native';
 
 import {ThemeContext} from '../context/Context';
@@ -20,12 +19,13 @@ export default function SearchScreen(props) {
   keyExtractor = (item, index) => item.id;
 
   const entries = useEntriesList({
+    keyExtractor,
     horizontal: false, 
     renderItem: ({item}) => (
       <Entry
         id={item.id}
         content={{title: item.title, text: item.excerpt, date: item.date}}
-        author={{id: item.uid, image: item.uimg}}
+        author={{id: item.uid, image: item.uimg, name: item.uname}}
         image={{url: item.image, size: 70, shape: 'rect'}}
         border={3}
         navigate={props.navigation.navigate}
