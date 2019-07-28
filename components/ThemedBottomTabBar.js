@@ -11,7 +11,7 @@ export default function ThemedBottomTabBar(props) {
         {...props}
         inactiveTintColor={context.theme.textColor}
         style={{
-          backgroundColor: context.theme.backgroundColor,
+          backgroundColor: context.theme.menuBgColor,
         }}
       />
     );

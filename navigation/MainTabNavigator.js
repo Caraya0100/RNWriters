@@ -7,6 +7,7 @@ import ThemedBottomTabBar from '../components/ThemedBottomTabBar';
 import HomeScreen from '../screens/HomeScreen';
 import SearchScreen from '../screens/SearchScreen';
 import EntryScreen from '../screens/EntryScreen';
+import UserScreen from '../screens/UserScreen';
 import TrendingScreen from '../screens/TrendingScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import Colors from '../constants/Colors';
@@ -24,6 +25,9 @@ const HomeStack = createStackNavigator(
     },
     Entry: {
       screen: EntryScreen,
+    },
+    User: {
+      screen: UserScreen,
     },
   },
   config
@@ -48,6 +52,9 @@ const SearchStack = createStackNavigator(
     },
     Entry: {
       screen: EntryScreen,
+    },
+    User: {
+      screen: UserScreen,
     },
   },
   config

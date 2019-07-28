@@ -21,6 +21,7 @@ export default function Entry(props) {
         icon,
         content, 
         border,
+        animation,
         navigate
     } = props;
     const context = useContext(ThemeContext);
@@ -48,32 +49,48 @@ export default function Entry(props) {
                 size={image.size} 
                 border={border} 
                 url={image.url} 
+                transition={{direction: animation, duration: 5.5}} 
                 onPress={() => navigate('Entry', {id})} 
                 style={{marginLeft: -marginLeft, zIndex: 2}} />
             );
         }
     }
 
+    authorImage = () => {
+        if (author.image !== undefined ) {
+            return(
+                <CircleImage 
+                size={image.size} 
+                border={border} 
+                url={author.image} 
+                transition={{direction: animation, duration: 7}} 
+                style={{zIndex: 3}}
+                onPress={() => navigate('User', {id: author.id})} />
+            );
+        }
+    } 
+
     return(
         <View style={[style, styles.container]}>
             {featuredImage()}
             <View style={[styles.circlesContainer, {marginTop: -marginTop}]}>
-                <CircleImage size={image.size} border={border} url={author.image} style={{zIndex: 3}} />
+                {authorImage()}
                 {circlefeaturedImage()}
                 <CircleIcon 
                     icon={icon.i} 
                     size={icon.size} 
+                    transition={{direction: animation, duration: 4}} 
                     border={{width: border, color: context.theme.backgroundColor}} 
                     fontSize={icon.fontSize} 
                     bgColors={[Colors.primary, Colors.secondary]} 
                     textColor={'#fff'}
                     onPress={icon.onPress}
-                    style={{marginLeft: -marginLeft / 1.4}} 
+                    style={author.image !== undefined ? {marginLeft: -marginLeft / 1.4}: {}} 
                 />
             </View>
             <View style={[styles.textContainer, {paddingBottom: paddingBottom}]}>
                 <Text style={[{color: context.theme.titleColor}, styles.text, font.title]}>{content.title}</Text>
-                <Text style={[{color: context.theme.textColor}, styles.text, font.text]}>{content.date}</Text>
+                <Text style={[{color: context.theme.textColor}, styles.text, font.text]}>{author.name} • {content.date}</Text>
                 <Text style={[{color: context.theme.textColor}, styles.text, font.text]}>{content.text}</Text>
             </View>
         </View>

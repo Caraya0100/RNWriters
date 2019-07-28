@@ -11,7 +11,7 @@ import {useEntry} from '../hooks/Dom';
 
 export default function EntryScreen(props) {
   const context = useContext(ThemeContext);
-  const entry = useEntry(props.navigation.getParam('id', ''));
+  const entry = useEntry(props.navigation.getParam('id', ''), props.navigation.navigate);
 
   return (
     <View style={[styles.container, {

@@ -11,6 +11,11 @@ export const font = StyleSheet.create({
         fontSize: 12,
         lineHeight: 24,
     },
+    strong: {
+        fontFamily: 'montserrat-extrabold',
+        fontSize: 12,
+        lineHeight: 24,
+    },
     menu: {
         fontFamily: 'montserrat',
         fontSize: 8,

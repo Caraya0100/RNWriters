@@ -17,6 +17,7 @@ export default function TopBarHeaderLeft(props) {
             fontSize={24}
             bgColors={[context.theme.transparentBgColor]} 
             textColor={context.theme.backTextColor} 
+            transition={{direction: 'horizontal', duration: 4}} 
             onPress={() => navigation.goBack()}
             style={{marginLeft: 10}}
         />

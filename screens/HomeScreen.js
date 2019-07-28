@@ -1,13 +1,12 @@
-import React, {useState, useContext, useEffect} from 'react';
+import React, {useContext} from 'react';
 import {
   View,
   StyleSheet,
   ScrollView,
-  Dimensions
 } from 'react-native';
 
 import {ThemeContext} from '../context/Context';
-import {useEntriesList} from '../hooks/Dom';
+import {useEntriesSlider} from '../hooks/Dom';
 import Entry from '../components/Entry';
 
 export default function HomeScreen(props) {
@@ -19,20 +18,21 @@ export default function HomeScreen(props) {
 
   keyExtractor = (item, index) => item.id;
 
-  const entries = useEntriesList({
+  const entries = useEntriesSlider({
     horizontal: true, 
     renderItem: ({item}) => (
       <Entry
         id={item.id}
         content={{title: item.title, text: item.excerpt, date: item.date}}
-        author={{id: item.uid, image: item.uimg}}
+        author={{id: item.uid, image: item.uimg, name: item.uname}}
         image={{url: item.image, size: 120, shape: 'circle'}}
         border={5}
         icon={{i: 'ios-add', size: 100, fontSize: 48, onPress: () => onPressEntry(item.id)}}
         navigate={props.navigation.navigate}
-        style={styles.entry}
-      />
-    )
+        animation={'horizontal'}
+        />
+    ),
+    dependencies: [context.theme]
   });
 
   return (
@@ -54,9 +54,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flexGrow: 1,
-    paddingTop: 30,
-  },
-  entry: {
-    width: Dimensions.get('screen').width,
+    //paddingTop: 30,
   }
 });
