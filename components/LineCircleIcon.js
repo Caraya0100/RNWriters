@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useContext, useEffect, useRef} from 'react';
 import {
     View,
     TouchableOpacity,
@@ -8,7 +8,10 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 
-export default function CircleIcon(props) {
+import {ThemeContext} from '../context/Context';
+
+export default function LineCircleIcon(props) {
+    const context = useContext(ThemeContext);
     const {icon, size, fontSize, border, bgColors, textColor, transition, onPress, style} = props;
     const styles = styleSheet(size, border);
     const offset = transition.direction === 'horizontal' ? size * 0.5 : -size * 0.5;
@@ -27,15 +30,17 @@ export default function CircleIcon(props) {
     let animation = {transform: [{translateX: translate.current}]};
     
     if (transition.direction === 'vertical') animation = {transform: [{translateY: translate.current}]};
-
+    
     background = () => {
         if (bgColors.length > 1) {
             return(
                 <LinearGradient
                 colors={bgColors}
                 start={[0, 1]} end={[1, 0]}
-                style={styles.background}>
-                    <Ionicons name={icon} size={fontSize} color={textColor} />
+                style={styles.border}>
+                    <View style={[styles.background, {backgroundColor: context.theme.backgroundColor}]}>
+                        <Ionicons name={icon} size={fontSize} color={textColor} />
+                    </View>
                 </LinearGradient>
             );
         } else {
@@ -66,11 +71,18 @@ const styleSheet = (size, border) => (StyleSheet.create({
         borderRadius: (size + border.width * 2) / 2,
         backgroundColor: border.color,
     },
+    border: {
+        width: size,
+        height: size,
+        paddingTop: border.width,
+        paddingLeft: border.width,
+        borderRadius: size / 2,
+    },
     background: {
         justifyContent: 'center',
         alignItems: 'center',
-        width: size,
-        height: size,
+        width: size - border.width * 2,
+        height: size - border.width * 2,
         borderRadius: size / 2,
     },
 }));

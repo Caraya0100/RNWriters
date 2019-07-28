@@ -26,14 +26,14 @@ export function usePanResponder({
             onMoveShouldSetPanResponder: onMoveShouldSetPanResponder,
             onPanResponderGrant: onPanResponderGrant,
             onPanResponderMove: (evt, gestureState) => {
-                const track = onPanResponderMove(evt, gestureState);
+                //const track = onPanResponderMove(evt, gestureState);
 
-                if (track) {
                     return Animated.event([
                         null, { dx: pan.x, dy: pan.y }],
-                        {listener: null}
+                        {listener: (evt, gestureState) => {
+                            onPanResponderMove(evt, gestureState);
+                        }}
                     )(evt, gestureState);
-                }
             },
             onPanResponderTerminationRequest: (evt, gestureState) => true,
             onPanResponderRelease: onPanResponderRelease,

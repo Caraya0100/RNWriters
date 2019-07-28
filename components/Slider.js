@@ -36,26 +36,11 @@ export default function Slider(props) {
     let _distance = 0;
     let _forthcoming = 0;
     const [items, setItems] = useState([...props.data]);
-    const translate = useRef(initialTranslate(props));
     const item = useRef(props.initialItem);
+    const translate = useRef(new Animated.ValueXY());
     const [panResponder, pan] = usePanResponder({
         addPanListener: (progress) => {
-            let xy = 
-            translate.current[item.current].setValue(updateTranslate({
-                itemIdx: item.current,
-                pan: progress,
-                current: item.current,
-                horizontal: props.horizontal
-            }));
-
-            if (_forthcoming >= 0 && _forthcoming < items.length && _forthcoming !== item.current) {
-                translate.current[_forthcoming].setValue(updateTranslate({
-                    itemIdx: _forthcoming,
-                    pan: progress,
-                    current: item.current,
-                    horizontal: props.horizontal
-                }));
-            }
+            
         },
         onMoveShouldSetPanResponder: (evt, gestureState) => {
             if (evt.nativeEvent.pageY > Math.floor(layout.window.height * (1 - props.grab.size))) {
@@ -67,127 +52,84 @@ export default function Slider(props) {
         onPanResponderGrant: (evt, gestureState) => {
         },
         onPanResponderMove: (evt, gestureState) => {
-            _distance = props.horizontal ? gestureState.dx : gestureState.dy;
-            _forthcoming = _distance < 0 ? item.current + 1 : item.current - 1;
+            let move = gestureState.dx + (-layout.window.width * item.current);
 
-            return true;
+            translate.current.setValue({x: move, y: 0});
+            //return true;
         },
         onPanResponderRelease: (evt, gestureState) => {
             const size = props.horizontal ? layout.window.width : layout.window.height;
+            _distance = props.horizontal ? gestureState.dx : gestureState.dy;
 
             if (Math.abs(_distance) >= (size * props.resilience)) {
-                if (_forthcoming >= 0 && _forthcoming < items.length) {
-                    Animated.spring(
-                        translate.current[item.current],
-                        {
-                            toValue: {
-                                x: props.horizontal ?  _distance < 0 ? -layout.window.width : layout.window.width / 2 : 0, 
-                                y: !props.horizontal ? _distance < 0 ? -layout.window.height : layout.window.height / 2 : 0
-                            },
-                            bounciness: 0
-                        },
-                    ).start();
-
-                    Animated.spring(
-                        translate.current[_forthcoming],
-                        {
-                            toValue: { x: 0, y: 0},
-                            bounciness: 0
-                        },
-                    ).start();
-
+                _forthcoming = _distance < 0 ? item.current + 1 : item.current - 1;
+                
+                if (_forthcoming >= 0 && _forthcoming < items.length)
                     item.current = _forthcoming;
-                } else {
-                    Animated.spring(
-                        translate.current[item.current],
-                        {toValue: {x: 0, y: 0}},
-                    ).start();
-                }
-            } else {
-                Animated.spring(
-                    translate.current[item.current],
-                    {toValue: {x: 0, y: 0}},
-                ).start();
-
-                if (_distance > 0 && (item.current - 1) >= 0) {
-                    Animated.spring(
-                        translate.current[item.current - 1],
-                        {
-                            toValue: {
-                                x: props.horizontal ?  -layout.window.width : 0, 
-                                y: !props.horizontal ? -layout.window.height : 0
-                            }
-                        },
-                    ).start();
-                }
             }
+
+            Animated.spring(
+                translate.current, {toValue: move(item.current, props.horizontal),},
+            ).start();
         },
         onPanResponderTerminate: (evt, gestureState) => {
         },
     }, [props.resilience, props.horizontal, items]);
     
     const content = [];
-    
+
     for (let i = 0; i < items.length; i++) {
+        const moveTo = move(i, props.horizontal);
         const itemStyles = [
             props.itemStyle,
             styles.itemContainer, 
-            {transform: translate.current[i].getTranslateTransform()},
-            {zIndex: items.length - i}
+            {transform: [{translateX: moveTo.x * -1}, {translateY: moveTo.y * -1}]},
         ];
 
         content.push(
-            <Animated.View key={i} style={itemStyles}>
+            <View key={i} style={itemStyles}>
                 {props.renderItem({item: items[i], index: i})}
-            </Animated.View>
+            </View>
         );
     }
 
-    return <View style={[styles.container, props.style]} {...panResponder.panHandlers}>{content}</View>
+    //translate.current = drag(pan, translate.current, props.horizontal);
+    let dimensions = {width: layout.window.width * items.length, height: layout.window.height};
+
+    if (!props.horizontal)
+        dimensions = {width: layout.window.width, height: layout.window.height * items.length};
+
+    const wrapperStyle = [dimensions, {
+        transform: translate.current.getTranslateTransform()
+    }];
+    
+    //if (props.horizontal) wrapperStyle.push({width: layout.window.width * items.length, height: layout.window.height});
+    //else wrapperStyle.push({width: layout.window.width, height: layout.window.height * items.length});
+    //console.log(wrapperStyle);
+
+    return (
+        <View style={[styles.container, props.style]}>
+            <Animated.View style={wrapperStyle} {...panResponder.panHandlers}>
+                {content}
+            </Animated.View>
+        </View>
+    );
 }
 
 Slider.defaultProps = defaultProps;
 
-function initialTranslate({initialItem, data, horizontal}) {
-    const translate = [];
-
-    for (let i = 0; i < data.length; i++) {
-        translate.push(new Animated.ValueXY(updateTranslate({
-            itemIdx: i,
-            pan: {x: 0, y: 0},
-            current: initialItem,
-            horizontal
-        })));
-    }
-
-    return translate;
+function drag(pan, current, horizontal) {
+    return { 
+        x: horizontal ? Animated.add(current.x, pan.x) : 0, 
+        y: !horizontal ? Animated.add(current.y, pan.y) : 0, 
+    };
 }
 
-function updateTranslate({itemIdx, pan, current, horizontal}) {
-    let drag = 0;
-    let axis = horizontal ? 'x' : 'y';
-
-    if (itemIdx < current) {
-        drag = horizontal ? -layout.window.width : -layout.window.height;
-
-        if (itemIdx === (current - 1)) {
-            const speedUp = pan[axis] * 2;
-            drag += speedUp;
-        }
-    } else if (itemIdx > current) {
-        drag = horizontal ? layout.window.width / 2 : layout.window.height / 2;
-
-        if (itemIdx === (current + 1)) {
-            const slowDown = pan[axis] * 0.5;
-            drag += slowDown;
-        }
-    } else {
-        drag = pan[axis];
-    }
-
-    if (horizontal) return {x: drag, y: 0};
-    
-    return {x: 0, y: drag};
+function move(current, horizontal) {
+    return {
+        x: horizontal ? -layout.window.width * current : 0, 
+        y: !horizontal ? -layout.window.height * current : 0, 
+    };
 }
 
 function renderEmptyItem() {
@@ -212,9 +154,9 @@ const styles = StyleSheet.create({
     itemContainer: {
         position: 'absolute',
         top: 0,
-        right: 0,
-        bottom: 0,
         left: 0,
+        width: layout.window.width,
+        height: layout.window.height,
     },
     loaderContainer: {
         justifyContent: 'center',

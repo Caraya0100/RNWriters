@@ -29,7 +29,8 @@ export default function HomeScreen(props) {
         border={5}
         icon={{i: 'ios-add', size: 100, fontSize: 48, onPress: () => onPressEntry(item.id)}}
         navigate={props.navigation.navigate}
-      />
+        animation={'horizontal'}
+        />
     ),
     dependencies: [context.theme]
   });
