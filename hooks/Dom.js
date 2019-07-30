@@ -5,15 +5,15 @@ import {
   } from 'react-native';
 
 import Colors from '../constants/Colors';
-import {useFetch} from './Fetch';
+import {useFetch, useFetchGQL} from './Fetch';
 import {ThemeContext} from '../context/Context';
 import Loader from '../components/Loader';
 import Entry from '../components/Entry';
 import Slider from '../components/Slider';
 import User from '../components/User';
 
-export function useLoadContent({effect, endpoint, defaultValue, dependencies = []}) {
-    const response = useFetch(endpoint, defaultValue);
+export function useLoadContent({effect, endpoint, defaultValue, dependencies = [], query = false}) {
+    const response = query !== false ? useFetchGQL(query, defaultValue) : useFetch(endpoint, defaultValue);
     const [content, setContent] = useState((<Loader size="large" color={Colors.primary} />));
 
     dependencies.push(response);
@@ -45,7 +45,18 @@ export function useEntriesSlider({horizontal, renderItem}) {
                 ));
             }
         },
-        endpoint: 'entries',
+        query: `{ 
+            entries {
+                id
+                date
+                excerpt
+                image
+                title
+                uid
+                uimg
+                uname
+            } 
+        }`,
         defaultValue: [],
         dependencies: [context],
     });

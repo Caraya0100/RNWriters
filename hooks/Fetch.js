@@ -18,3 +18,29 @@ export function useFetch(endpoint, defaultValue) {
 
     return data;
 }
+
+export function useFetchGQL(query, defaultValue) {
+    const [data, setData] = useState(defaultValue);
+
+    useEffect(() => {
+        async function fetchData() {
+            const response = await fetch(routes.api + '/graphql', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                  query,
+                })
+            });
+            const json = await response.json();
+
+            setData(json.data.entries);
+        }
+        
+        fetchData();
+    }, defaultValue);
+
+    return data;
+}
